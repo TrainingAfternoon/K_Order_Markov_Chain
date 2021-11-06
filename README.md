@@ -17,15 +17,3 @@ Markov chains are a mathematical tool that allow for the prediction of a future 
 
 Markov chains are organized as *Transition Matrices*. Consider a three-state system, A, B, C. Transition matrices are right stochastic matrices, so each row is a probability vector, which represents the probability that the state will transition from a given state to another state. Rows represent current states, columns represent potential states.
 
-'''
-+---+----+----+----+
-| . | A  | B  | C  |
-+---+----+----+----+
-| A | .6 | .3 | .1 |
-| - |  - |  - |  - |
-| B | .5 | .4 | .1 |
-| - |  - |  - |  - |
-| C | .3 | .6 | .1 |
-+---+----+----+----+
-'''
-
