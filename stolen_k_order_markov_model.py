@@ -1,6 +1,12 @@
 '''
+Accreditations:
 Developed from the code provided here: https://www.educative.io/blog/deep-learning-text-generation-markov-chains
-Beemovie.txt taken from: https://gist.githubusercontent.com/The5heepDev/a15539b297a7862af4f12ce07fee6bb7/raw/7164813a9b8d0a3b2dcffd5b80005f1967887475/entire_bee_movie_script
+beemovie.txt taken from: https://gist.githubusercontent.com/The5heepDev/a15539b297a7862af4f12ce07fee6bb7/raw/7164813a9b8d0a3b2dcffd5b80005f1967887475/entire_bee_movie_script
+huckfinn.txt taken from: https://www.gutenberg.org/ebooks/76
+bukowy.txt taken from: https://www.researchgate.net/publication/318341911_Increased_Perfusion_Pressure_Drives_Renal_T-Cell_Infiltration_in_the_Dahl_Salt-Sensitive_Rat
+
+Revisions and code organization done by: Sam Keyser 11/6/2021
+CS3400 Machine Learning Final Project
 '''
 import numpy as np
 import re
@@ -9,15 +15,22 @@ class KOrderMarkovModel:
 
 
     def __init__(self, k=4):
+
         self.k = k
 
     def fit(self, filepath):
+
         self.T = self._convertFreqIntoProb(self._generateTable(self._load_text(filepath)))
 
     def predict(self, sentence_fragment, max_len=10000) -> str:
+
+        if len(sentence_fragment) < self.k:
+            raise Exception('Length of the sentence fragment must be at least the length of the context, k')
+
         return self._generateText(sentence_fragment, max_len)
 
     def _generateTable(self, data):
+
         k = self.k
         T = {}
         for i in range(len(data) - k):
@@ -36,6 +49,7 @@ class KOrderMarkovModel:
         return T
 
     def _convertFreqIntoProb(self, T):
+
         for kx in T.keys():
             s = float(sum(T[kx].values()))
             for k in T[kx].keys():
@@ -44,9 +58,8 @@ class KOrderMarkovModel:
         return T
 
     def _load_text(self, filename):
+
         with open(filename, encoding='utf8') as f:
-            #print(re.sub('\s+', ' ', ' '.join(f.readlines()).replace('\n', ' ').lower()))
-            #return re.sub('\s+', ' ', ' '.join(f.readlines()).replace('\n', ' ').lower())
             return f.read().lower().replace('\n', ' ')
 
     def _sample_next(self, ctx, model):
@@ -56,9 +69,6 @@ class KOrderMarkovModel:
             return " "
         possible_Chars = list(model[ctx].keys())
         possible_values = list(model[ctx].values())
-
-        print(possible_Chars)
-        print(possible_values)
 
         return np.random.choice(possible_Chars, p=possible_values)
 
@@ -73,6 +83,7 @@ class KOrderMarkovModel:
             ctx = sentence[-self.k:]
         return sentence
 
+
 def split(str, slice):
     k = slice
     while k <= len(str):
@@ -81,10 +92,15 @@ def split(str, slice):
 
 
 def main():
-    sentence_fragment = 'dear'
-    model = KOrderMarkovModel(len(sentence_fragment))
-    model.fit('train_corpus.txt')
-    print('\n'.join([sub for sub in split(model.predict(sentence_fragment, 256), 80)]))
+    k = int(input('K = '))
+    corpus = input('Training File: ')
+    sentence_fragment = input('Sentence: ')
+    prediction_len = int(input('Prediction output length: '))
+
+    model = KOrderMarkovModel(k)
+    model.fit(corpus)
+
+    print('\n'.join([sub for sub in split(model.predict(sentence_fragment, prediction_len), 84)]))
 
 if __name__ == '__main__':
     main()
