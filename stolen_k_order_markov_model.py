@@ -20,16 +20,16 @@ class KOrderMarkovModel:
 
     def fit(self, filepath):
 
-        self.T = self._convertFreqIntoProb(self._generateTable(self._load_text(filepath)))
+        self.T = self._convert_freq_into_prob(self._generate_table(self._load_text(filepath)))
 
     def predict(self, sentence_fragment, max_len=10000) -> str:
 
         if len(sentence_fragment) < self.k:
             raise Exception('Length of the sentence fragment must be at least the length of the context, k')
 
-        return self._generateText(sentence_fragment, max_len)
+        return self._generate_text(sentence_fragment, max_len)
 
-    def _generateTable(self, data):
+    def _generate_table(self, data):
 
         k = self.k
         T = {}
@@ -48,7 +48,7 @@ class KOrderMarkovModel:
 
         return T
 
-    def _convertFreqIntoProb(self, T):
+    def _convert_freq_into_prob(self, T):
 
         for kx in T.keys():
             s = float(sum(T[kx].values()))
@@ -72,7 +72,7 @@ class KOrderMarkovModel:
 
         return np.random.choice(possible_Chars, p=possible_values)
 
-    def _generateText(self, starting_sent, maxLen):
+    def _generate_text(self, starting_sent, maxLen):
 
         sentence = starting_sent
         ctx = starting_sent[-self.k:]
