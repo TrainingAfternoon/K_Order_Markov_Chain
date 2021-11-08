@@ -13,24 +13,23 @@ import re
 
 class KOrderMarkovModel:
 
-
     def __init__(self, k=4):
-
         self.k = k
+        self.T = None
 
     def fit(self, filepath):
-
         self.T = self._convert_freq_into_prob(self._generate_table(self._load_text(filepath)))
 
     def predict(self, sentence_fragment, max_len=10000) -> str:
-
         if len(sentence_fragment) < self.k:
             raise Exception('Length of the sentence fragment must be at least the length of the context, k')
+
+        if self.T is None:
+            raise Exception('Model has not been fit yet')
 
         return self._generate_text(sentence_fragment, max_len)
 
     def _generate_table(self, data):
-
         k = self.k
         T = {}
         for i in range(len(data) - k):
@@ -49,7 +48,6 @@ class KOrderMarkovModel:
         return T
 
     def _convert_freq_into_prob(self, T):
-
         for kx in T.keys():
             s = float(sum(T[kx].values()))
             for k in T[kx].keys():
